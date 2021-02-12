@@ -183,7 +183,7 @@ measures = [
         id="smr_total",
         numerator="had_smr",
         denominator="population",
-        group_by="population",
+        group_by=None,
     ),
 ]
 
