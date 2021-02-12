@@ -1,20 +1,33 @@
 version: '3.0'
 
 expectations:
-  population_size: 1000
+  population_size: 10000
 
 actions:
 
-  generate_study_population:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition
+  generate_study_population_smr:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_smr --index-date-range "2019-01-01 to 2021-02-01 by month" --output-dir=output/measures
     outputs:
       highly_sensitive:
-        cohort: output/input.csv
-
-  run_model:
-    run: stata-mp:latest analysis/model.do
-    needs: [generate_study_population]
+        cohort: output/measures/input_*.csv
+  
+  generate_measures_smr:
+      run: cohortextractor:latest generate_measures --study-definition study_definition_smr --output-dir=output/measures
+      needs: [generate_study_population_smr]
+      outputs:
+        moderately_sensitive:
+          measure_csv: output/measures/measure_*.csv
+  
+  generate_plots_smr:
+    run: python:latest python analysis/generate_plots_smr.py
+    needs: [generate_measures_smr]
     outputs:
       moderately_sensitive:
-        log: logs/model.log
+        figure1: output/figures/smr/population_rates.jpeg
+        figure2: output/figures/smr/sex_rates.jpeg
+        figure3: output/figures/smr/region_rates.jpeg
+        figure4: output/figures/smr/age_rates.jpeg
+        figure5: output/figures/smr/hosp_adm_rates.jpeg
+        figure6: output/figures/smr/care_home_status_rates.jpeg
+        figure7: output/figures/smr/falls_rates.jpeg
 
