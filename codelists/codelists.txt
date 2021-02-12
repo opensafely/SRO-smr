@@ -1,3 +1,5 @@
-opensafely/chronic-cardiac-disease/2020-04-08
-opensafely/chronic-liver-disease/2020-06-02
-opensafely/asthma-inhaler-salbutamol-medication/2020-04-15
+opensafely/ethnicity/2020-04-27
+opensafely/pulse-oximetry/72ce1380
+opensafely/structured-medication-review-nhs-england/5459205f
+opensafely/nhs-england-care-homes-residential-status/3712ef13
+opensafely/falls/2020-07-09
