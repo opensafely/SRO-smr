@@ -5,25 +5,13 @@ from cohortextractor import (
     StudyDefinition,
     patients,
     codelist,
-    Measure,
-    codelist_from_csv
+    Measure
 )
 
 
 
 # Import codelists
-
-smr_codes = codelist_from_csv("codelists/opensafely-structured-medication-review-nhs-england.csv",
-                              system="snomed",
-                              column="code",)
-
-care_home_codes = codelist_from_csv("codelists/opensafely-nhs-england-care-homes-residential-status.csv",
-                                    system="snomed",
-                                    column="code",)
-
-fall_codes = codelist_from_csv("codelists/opensafely-falls.csv",
-                               system="ctv3",
-                               column="CTV3Code",)
+from codelists import *
 
 
 start_date = "2019-01-01"
@@ -52,7 +40,7 @@ study = StudyDefinition(
 
 
     care_home_status=patients.with_these_clinical_events(
-        care_home_codes,
+        nhse_care_homes_codes,
         returning="binary_flag",
         between=[start_date, end_date],
         return_expectations={"incidence": 0.2}
