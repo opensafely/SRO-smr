@@ -29,7 +29,7 @@ actions:
       needs: [generate_study_population_hospital_admission]
       outputs:
         moderately_sensitive:
-          measure_csv: output/measures/measure_hospital_admission_*.csv
+          measure_csv: output/measures/measure_smr_by_hospital_admission*.csv
   
   generate_plots_smr:
     run: python:latest python analysis/generate_plots_smr.py

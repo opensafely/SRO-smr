@@ -13,6 +13,7 @@ from cohortextractor import (
 from codelists.codelists import *
 
 
+start_date = "2019-01-01"
 end_date = "today"
 
 # Specifiy study defeinition
@@ -30,20 +31,22 @@ study = StudyDefinition(
         """
         hospital_admission
         """,
-        between=[index_date end_date]),
+        
+        
+        ),
 
-   
+    
     hospital_admission_date=patients.admitted_to_hospital(
         returning="date_admitted",
         date_format='YYYY-MM-DD',
-        return_expectations={"incidence": 0.2},
+        return_expectations={"incidence": 1},
         between=[start_date, end_date]
     ),
-
+    
     hospital_discharged_date=patients.admitted_to_hospital(
         returning="date_discharged",
         date_format='YYYY-MM-DD',
-        return_expectations={"incidence": 0.2},
+        return_expectations={"incidence": 1},
         between=[start_date, end_date]
     ),
 
@@ -57,7 +60,7 @@ study = StudyDefinition(
     ),
 
 
-    had_smr_after_hospital=patients.with_these_clinical_events(
+    had_smr_after_hospital_admission = patients.with_these_clinical_events(
         smr_codes,
         returning="binary_flag",
         between=["hospital_discharged_date",
@@ -65,19 +68,23 @@ study = StudyDefinition(
         return_expectations={"incidence": 0.2}
     ),
 
-   
+    practice=patients.registered_practice_as_of(
+        "index_date",
+        returning="pseudo_id",
+        return_expectations={
+            "int": {"distribution": "normal", "mean": 25, "stddev": 5}, "incidence": 0.5}
+    ),
 
+    
 
 )
 
 measures = [
-    
-
     Measure(
         id="smr_by_hospital_admission",
         numerator="had_smr_after_hospital_admission",
         denominator="population",
-        group_by=["had_smr_after_hospital_admission"],
+        group_by=["practice"],
     ),
 
 ]

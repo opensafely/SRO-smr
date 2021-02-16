@@ -2,6 +2,7 @@ import sys
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
+from ebmdatalab import charts
 
 if not os.path.exists('output/figures'):
     os.mkdir('output/figures')
@@ -21,7 +22,10 @@ measures_df_hosp_adm = pd.read_csv(
     'output/measures/measure_smr_by_hospital_admission.csv')
 measures_df_total = pd.read_csv(
     'output/measures/measure_smr_total.csv')
-
+measures_df_total_by_practice = pd.read_csv(
+    'output/measures/measure_smr_total_by_practice.csv')
+measures_smr_by_hospital_admission = pd.read_csv(
+    'output/measures/measure_smr_by_hospital_admission.csv')
 
 # temporary fix for population not working in Measures
 measures_df_total = measures_df_total.groupby(
@@ -42,7 +46,8 @@ to_datetime_sort(measures_df_total)
 to_datetime_sort(measures_df_hosp_adm)
 to_datetime_sort(measures_df_falls)
 to_datetime_sort(measures_df_care_home_status)
-
+to_datetime_sort(measures_df_total_by_practice)
+to_datetime_sort(measures_smr_by_hospital_admission)
 
 def calculate_rate(df, value_col='had_smr', population_col='population'):
     num_per_hundred_thousand = df[value_col]/(df[population_col]/100000)
@@ -56,6 +61,8 @@ calculate_rate(measures_df_total)
 calculate_rate(measures_df_hosp_adm)
 calculate_rate(measures_df_falls)
 calculate_rate(measures_df_care_home_status)
+calculate_rate(measures_df_total_by_practice)
+calculate_rate(measures_smr_by_hospital_admission, value_col='had_smr_after_hospital_admission')
 
 
 def plot_measures(df, title, filename, column_to_plot, category=False, y_label='Number per 100, 000'):
@@ -104,3 +111,23 @@ plot_measures(measures_df_falls,
 
 plot_measures(measures_df_hosp_adm,
               'SMR use following recent hospital admision',  'hosp_adm_rates', 'num_per_hundred_thousand', category='hospital_admission')
+
+smr_decile_chart = charts.deciles_chart(
+    measures_df_total_by_practice,
+    period_column="date",
+    column="value",
+    title="SMR by practice",
+    ylabel="rate per 100,000",
+    show_outer_percentiles=False,
+    show_legend=True,
+)
+
+smr_decile_chart_hospital_admission = charts.deciles_chart(
+    measures_smr_by_hospital_admission,
+    period_column="date",
+    column="num_per_hundred_thousand",
+    title="SMR in those hospitalised by practice",
+    ylabel="rate per 100,000",
+    show_outer_percentiles=False,
+    show_legend=True,
+)

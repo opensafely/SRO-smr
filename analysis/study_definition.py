@@ -13,6 +13,7 @@ from cohortextractor import (
 # Import codelists
 from codelists.codelists import *
 
+end_date = "2021-02-01"
 
 
 # Specifiy study defeinition
@@ -20,25 +21,18 @@ study = StudyDefinition(
     index_date = "2019-01-01",
     # Configure the expectations framework
     default_expectations={
-        "date": {"earliest": start_date, "latest": end_date},
+        "date": {"earliest": "2019-01-01", "latest": end_date},
         "rate": "exponential_increase",
         "incidence": 0.8,
     },
 
-    population=patients.registered_as_of(start_date),
+    population=patients.registered_as_of("index_date"),
     
-    # had_smr_date=patients.with_these_clinical_events(
-    #     smr_codes,
-    #     returning="date",
-    #     between=[start_date, end_date],
-    #     date_format='YYYY-MM-DD',
-    #     return_expectations={"incidence": 0.2}
-    # ),
 
     had_smr=patients.with_these_clinical_events(
         smr_codes,
         returning="binary_flag",
-        between=[start_date, end_date],
+        between=["index_date", end_date],
         include_date_of_match=True,
         date_format='YYYY-MM-DD',
         return_expectations={"incidence": 0.2}
@@ -50,7 +44,7 @@ study = StudyDefinition(
     care_home_status=patients.with_these_clinical_events(
         nhse_care_homes_codes,
         returning="binary_flag",
-        between=[start_date, end_date],
+        between=["index_date", end_date],
         return_expectations={"incidence": 0.2}
     ),
 
@@ -59,7 +53,7 @@ study = StudyDefinition(
     falls= patients.with_these_clinical_events(
         fall_codes,
         returning="binary_flag",
-        between=[start_date, end_date],
+        between=["index_date", end_date],
         include_date_of_match=True,
         date_format='YYYY-MM-DD',
         return_expectations={"incidence": 0.2}
@@ -76,7 +70,7 @@ study = StudyDefinition(
 
 
     region=patients.registered_practice_as_of(
-        start_date,
+        "index_date",
         returning="nuts1_region_name",
         return_expectations={"category": {"ratios": {
             "North East": 0.1,
@@ -90,7 +84,7 @@ study = StudyDefinition(
     ),
 
     age=patients.age_as_of(
-        start_date,
+        "index_date",
         return_expectations={
             "rate": "universal",
             "int": {"distribution": "population_ages"},
@@ -136,7 +130,7 @@ study = StudyDefinition(
     ),
 
     practice=patients.registered_practice_as_of(
-        start_date,
+        "index_date",
         returning="pseudo_id",
         return_expectations={
             "int": {"distribution": "normal", "mean": 25, "stddev": 5}, "incidence": 0.5}
