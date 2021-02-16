@@ -1,168 +1,193 @@
 
-# Import functions
 
+# Import functions
 from cohortextractor import (
-    StudyDefinition, 
-    patients, 
-    codelist, 
-    codelist_from_csv
+    StudyDefinition,
+    patients,
+    codelist,
+    Measure
 )
+
+
 
 # Import codelists
+from codelists.codelists import *
 
-chronic_cardiac_disease_codes = codelist_from_csv(
-    "codelists/opensafely-chronic-cardiac-disease.csv", system="ctv3", column="CTV3ID"
-)
-chronic_liver_disease_codes = codelist_from_csv(
-    "codelists/opensafely-chronic-liver-disease.csv", system="ctv3", column="CTV3ID"
-)
-salbutamol_codes = codelist_from_csv(
-    "codelists/opensafely-asthma-inhaler-salbutamol-medication.csv",
-    system="snomed",
-    column="id",
-)
-systolic_blood_pressure_codes = codelist(["2469."], system="ctv3")
-diastolic_blood_pressure_codes = codelist(["246A."], system="ctv3")
+end_date = "2021-02-01"
 
 
 # Specifiy study defeinition
-
 study = StudyDefinition(
+    index_date = "2019-01-01",
     # Configure the expectations framework
     default_expectations={
-        "date": {"earliest": "1900-01-01", "latest": "today"},
+        "date": {"earliest": "2019-01-01", "latest": end_date},
         "rate": "exponential_increase",
+        "incidence": 0.8,
     },
-    # This line defines the study population
-    population=patients.registered_with_one_practice_between(
-        "2019-02-01", "2020-02-01"
+
+    population=patients.registered_as_of("index_date"),
+    
+
+    had_smr=patients.with_these_clinical_events(
+        smr_codes,
+        returning="binary_flag",
+        between=["index_date", end_date],
+        include_date_of_match=True,
+        date_format='YYYY-MM-DD',
+        return_expectations={"incidence": 0.2}
     ),
 
-    # https://github.com/opensafely/risk-factors-research/issues/49
+
+
+
+    care_home_status=patients.with_these_clinical_events(
+        nhse_care_homes_codes,
+        returning="binary_flag",
+        between=["index_date", end_date],
+        return_expectations={"incidence": 0.2}
+    ),
+
+
+    
+    falls= patients.with_these_clinical_events(
+        fall_codes,
+        returning="binary_flag",
+        between=["index_date", end_date],
+        include_date_of_match=True,
+        date_format='YYYY-MM-DD',
+        return_expectations={"incidence": 0.2}
+    ),
+
+    had_smr_after_falls=patients.with_these_clinical_events(
+        smr_codes,
+        returning="binary_flag",
+        between=["falls_date",
+                 "falls_date + 3 months"],
+        return_expectations={"incidence": 0.2}
+    ),
+
+
+
+    region=patients.registered_practice_as_of(
+        "index_date",
+        returning="nuts1_region_name",
+        return_expectations={"category": {"ratios": {
+            "North East": 0.1,
+            "North West": 0.1,
+            "Yorkshire and the Humber": 0.1,
+            "East Midlands": 0.1,
+            "West Midlands": 0.1,
+            "East of England": 0.1,
+            "London": 0.2,
+            "South East": 0.2, }}}
+    ),
+
     age=patients.age_as_of(
-        "2020-02-01",
+        "index_date",
         return_expectations={
             "rate": "universal",
             "int": {"distribution": "population_ages"},
         },
     ),
-    
-    # https://github.com/opensafely/risk-factors-research/issues/46
+
+    age_band=patients.categorised_as(
+        {
+            "0": "DEFAULT",
+            "0-19": """ age >= 0 AND age < 20""",
+            "20-29": """ age >=  20 AND age < 30""",
+            "30-39": """ age >=  30 AND age < 40""",
+            "40-49": """ age >=  40 AND age < 50""",
+            "50-59": """ age >=  50 AND age < 60""",
+            "60-69": """ age >=  60 AND age < 70""",
+            "70-79": """ age >=  70 AND age < 80""",
+            "80+": """ age >=  80 AND age < 120""",
+        },
+        return_expectations={
+            "rate": "universal",
+            "category": {
+                "ratios": {
+                    "0-19": 0.125,
+                    "20-29": 0.125,
+                    "30-39": 0.125,
+                    "40-49": 0.125,
+                    "50-59": 0.125,
+                    "60-69": 0.125,
+                    "70-79": 0.125,
+                    "80+": 0.125,
+                }
+            },
+        },
+
+    ),
+
+
     sex=patients.sex(
         return_expectations={
             "rate": "universal",
             "category": {"ratios": {"M": 0.49, "F": 0.51}},
         }
     ),
-    
-    # https://codelists.opensafely.org/codelist/opensafely/chronic-cardiac-disease/2020-04-08/
-    chronic_cardiac_disease=patients.with_these_clinical_events(
-        chronic_cardiac_disease_codes,
-        returning="date",
-        find_first_match_in_period=True,
-        include_month=True,
-        return_expectations={"incidence": 0.2},
+
+    practice=patients.registered_practice_as_of(
+        "index_date",
+        returning="pseudo_id",
+        return_expectations={
+            "int": {"distribution": "normal", "mean": 25, "stddev": 5}, "incidence": 0.5}
     ),
 
-    # https://codelists.opensafely.org/codelist/opensafely/chronic-liver-disease/2020-06-02/
-    chronic_liver_disease=patients.with_these_clinical_events(
-        chronic_liver_disease_codes,
-        returning="date",
-        find_first_match_in_period=True,
-        include_month=True,
-        return_expectations={
-            "incidence": 0.2,
-            "date": {"earliest": "1950-01-01", "latest": "today"},
-        },
-    ),
 
-    # https://github.com/opensafely/risk-factors-research/issues/51
-    bmi=patients.most_recent_bmi(
-        on_or_after="2010-02-01",
-        minimum_age_at_measurement=16,
-        include_measurement_date=True,
-        include_month=True,
-        return_expectations={
-            "incidence": 0.6,
-            "float": {"distribution": "normal", "mean": 35, "stddev": 10},
-        },
-    ),
-
-    # https://github.com/opensafely/risk-factors-research/issues/48
-    bp_sys=patients.mean_recorded_value(
-        systolic_blood_pressure_codes,
-        on_most_recent_day_of_measurement=True,
-        on_or_before="2020-02-01",
-        include_measurement_date=True,
-        include_month=True,
-        return_expectations={
-            "incidence": 0.6,
-            "float": {"distribution": "normal", "mean": 80, "stddev": 10},
-        },
-    ),
-    
-    # https://github.com/opensafely/risk-factors-research/issues/48
-    bp_dias=patients.mean_recorded_value(
-        diastolic_blood_pressure_codes,
-        on_most_recent_day_of_measurement=True,
-        on_or_before="2020-02-01",
-        include_measurement_date=True,
-        include_month=True,
-        return_expectations={
-            "incidence": 0.6,
-            "float": {"distribution": "normal", "mean": 120, "stddev": 10},
-        },
-    ),
-
-    # https://github.com/opensafely/risk-factors-research/issues/44
-    stp=patients.registered_practice_as_of(
-        "2020-02-01",
-        returning="stp_code",
-        return_expectations={
-            "rate": "universal",
-            "category": {"ratios": {"STP1": 0.5, "STP2": 0.5}},
-        },
-    ),
-    
-    # https://github.com/opensafely/risk-factors-research/issues/44
-    msoa=patients.registered_practice_as_of(
-        "2020-02-01",
-        returning="msoa_code",
-        return_expectations={
-            "rate": "universal",
-            "category": {"ratios": {"MSOA1": 0.5, "MSOA2": 0.5}},
-        },
-    ),
-
-    # https://github.com/opensafely/risk-factors-research/issues/45
-    imd=patients.address_as_of(
-        "2020-02-01",
-        returning="index_of_multiple_deprivation",
-        round_to_nearest=100,
-        return_expectations={
-            "rate": "universal",
-            "category": {"ratios": {"100": 0.1, "200": 0.2, "300": 0.7}},
-        },
-    ),
-
-    # https://github.com/opensafely/risk-factors-research/issues/47
-    rural_urban=patients.address_as_of(
-        "2020-02-01",
-        returning="rural_urban_classification",
-        return_expectations={
-            "rate": "universal",
-            "category": {"ratios": {"rural": 0.1, "urban": 0.9}},
-        },
-    ),
- 
-    # https://codelists.opensafely.org/codelist/opensafely/asthma-inhaler-salbutamol-medication/2020-04-15/
-    recent_salbutamol_count=patients.with_these_medications(
-        salbutamol_codes,
-        between=["2018-02-01", "2020-02-01"],
-        returning="number_of_matches_in_period",
-        return_expectations={
-            "incidence": 0.6,
-            "int": {"distribution": "normal", "mean": 8, "stddev": 2},
-        },
-    ),
 )
+
+measures = [
+    Measure(
+        id="smr_by_sex",
+        numerator="had_smr",
+        denominator="population",
+        group_by=["sex"],
+    ),
+
+    Measure(
+        id="smr_by_region",
+        numerator="had_smr",
+        denominator="population",
+        group_by=["region"],
+    ),
+
+    Measure(
+        id="smr_by_age_band",
+        numerator="had_smr",
+        denominator="population",
+        group_by=["age_band"],
+    ),
+
+    Measure(
+        id="smr_by_care_home_status",
+        numerator="had_smr",
+        denominator="population",
+        group_by=["care_home_status"],
+    ),
+
+    Measure(
+        id="smr_by_falls",
+        numerator="had_smr_after_falls",
+        denominator="population",
+        group_by=['practice'],
+    ),
+
+
+    Measure(
+        id="smr_total",
+        numerator="had_smr",
+        denominator="population",
+        group_by=None,
+    ),
+
+    Measure(
+        id="smr_total_by_practice",
+        numerator="had_smr",
+        denominator="population",
+        group_by=["practice"],
+    ),
+]
+

@@ -1,0 +1,34 @@
+{
+  "files": {
+    "opensafely-ethnicity.csv": {
+      "id": "opensafely/ethnicity/2020-04-27",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/ethnicity/2020-04-27/",
+      "downloaded_at": "2021-02-12 09:46:43.895247Z",
+      "sha": "3d2f3998b71863a80b24d60f6f4282e14191ae13"
+    },
+    "opensafely-pulse-oximetry.csv": {
+      "id": "opensafely/pulse-oximetry/72ce1380",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/pulse-oximetry/72ce1380/",
+      "downloaded_at": "2021-02-12 09:46:44.106427Z",
+      "sha": "9a82ffa751c58d33e6ddac3f7cef0413ab635bf9"
+    },
+    "opensafely-structured-medication-review-nhs-england.csv": {
+      "id": "opensafely/structured-medication-review-nhs-england/5459205f",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/structured-medication-review-nhs-england/5459205f/",
+      "downloaded_at": "2021-02-12 09:46:44.303836Z",
+      "sha": "7bd4843c423ef7618c6d8f27164dc0939f2c9a9a"
+    },
+    "opensafely-nhs-england-care-homes-residential-status.csv": {
+      "id": "opensafely/nhs-england-care-homes-residential-status/3712ef13",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/nhs-england-care-homes-residential-status/3712ef13/",
+      "downloaded_at": "2021-02-12 09:46:44.498777Z",
+      "sha": "357b2af4841e574f7d43bfeff143b39cdfed6997"
+    },
+    "opensafely-falls.csv": {
+      "id": "opensafely/falls/2020-07-09",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/falls/2020-07-09/",
+      "downloaded_at": "2021-02-12 09:46:44.713065Z",
+      "sha": "941a6146efde05d3d083fa3940c9a78c2331156f"
+    }
+  }
+}
