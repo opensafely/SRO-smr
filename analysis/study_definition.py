@@ -11,7 +11,7 @@ from cohortextractor import (
 
 
 # Import codelists
-from codelists import *
+from codelists.codelists import *
 
 
 start_date = "2019-01-01"
@@ -19,6 +19,7 @@ end_date = "today"
 
 # Specifiy study defeinition
 study = StudyDefinition(
+    index_date = "2019-01-01",
     # Configure the expectations framework
     default_expectations={
         "date": {"earliest": start_date, "latest": end_date},
@@ -28,6 +29,13 @@ study = StudyDefinition(
 
     population=patients.registered_as_of(start_date),
     
+    # had_smr_date=patients.with_these_clinical_events(
+    #     smr_codes,
+    #     returning="date",
+    #     between=[start_date, end_date],
+    #     date_format='YYYY-MM-DD',
+    #     return_expectations={"incidence": 0.2}
+    # ),
 
     had_smr=patients.with_these_clinical_events(
         smr_codes,
@@ -39,6 +47,8 @@ study = StudyDefinition(
     ),
 
 
+
+
     care_home_status=patients.with_these_clinical_events(
         nhse_care_homes_codes,
         returning="binary_flag",
@@ -46,18 +56,55 @@ study = StudyDefinition(
         return_expectations={"incidence": 0.2}
     ),
 
-    hospital_admission= patients.admitted_to_hospital(
-        returning="binary_flag",
+    hospital_admission_date= patients.admitted_to_hospital(
+        returning="date_admitted",
+        date_format='YYYY-MM-DD',
         return_expectations={"incidence": 0.2},
         between=[start_date, end_date]
     ),
 
-    falls= patients.with_these_clinical_events(
+    hospital_discharged_date=patients.admitted_to_hospital(
+        returning="date_discharged",
+        date_format='YYYY-MM-DD',
+        return_expectations={"incidence": 0.2},
+        between=[start_date, end_date]
+    ),
+
+    #hospital admission that was not day case
+    #discharge date occur more >=1 after admission
+    hospital_admission=patients.admitted_to_hospital(
+        returning="binary_flag",
+        return_expectations={"incidence": 0.2},
+        between=["hospital_admission_date + 1 day",
+                 "hospital_admission_date + 1 month"]
+    ),
+
+
+    had_smr_after_hospital=patients.with_these_clinical_events(
         smr_codes,
         returning="binary_flag",
-        between=[start_date, end_date],
+        between=["hospital_discharged_date", "hospital_discharged_date + 3 months"],
         return_expectations={"incidence": 0.2}
     ),
+
+    
+    falls= patients.with_these_clinical_events(
+        fall_codes,
+        returning="binary_flag",
+        between=[start_date, end_date],
+        include_date_of_match=True,
+        date_format='YYYY-MM-DD',
+        return_expectations={"incidence": 0.2}
+    ),
+
+    had_smr_after_falls=patients.with_these_clinical_events(
+        smr_codes,
+        returning="binary_flag",
+        between=["falls_date",
+                 "falls_date + 3 months"],
+        return_expectations={"incidence": 0.2}
+    ),
+
 
 
     region=patients.registered_practice_as_of(
@@ -120,6 +167,13 @@ study = StudyDefinition(
         }
     ),
 
+    practice=patients.registered_practice_as_of(
+        start_date,
+        returning="pseudo_id",
+        return_expectations={
+            "int": {"distribution": "normal", "mean": 25, "stddev": 5}, "incidence": 0.5}
+    ),
+
 
 )
 
@@ -154,16 +208,16 @@ measures = [
 
     Measure(
         id="smr_by_falls",
-        numerator="had_smr",
+        numerator="had_smr_after_falls",
         denominator="population",
-        group_by=["falls"],
+        group_by=["had_smr_after_falls"],
     ),
 
     Measure(
         id="smr_by_hospital_admission",
-        numerator="had_smr",
+        numerator="had_smr_after_hospital_admission",
         denominator="population",
-        group_by=["hospital_admission"],
+        group_by=["had_smr_after_hospital_admission"],
     ),
 
 
@@ -172,6 +226,13 @@ measures = [
         numerator="had_smr",
         denominator="population",
         group_by=None,
+    ),
+
+    Measure(
+        id="smr_total_by_practice",
+        numerator="had_smr",
+        denominator="population",
+        group_by=["practice"],
     ),
 ]
 
