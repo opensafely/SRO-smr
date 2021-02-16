@@ -172,7 +172,7 @@ measures = [
         id="smr_by_falls",
         numerator="had_smr_after_falls",
         denominator="population",
-        group_by=["had_smr_after_falls"],
+        group_by=['practice'],
     ),
 
 

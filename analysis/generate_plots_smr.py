@@ -18,14 +18,14 @@ measures_df_falls = pd.read_csv(
     'output/measures/measure_smr_by_falls.csv')
 measures_df_care_home_status = pd.read_csv(
     'output/measures/measure_smr_by_care_home_status.csv')
-measures_df_hosp_adm = pd.read_csv(
-    'output/measures/measure_smr_by_hospital_admission.csv')
 measures_df_total = pd.read_csv(
     'output/measures/measure_smr_total.csv')
 measures_df_total_by_practice = pd.read_csv(
     'output/measures/measure_smr_total_by_practice.csv')
-measures_smr_by_hospital_admission = pd.read_csv(
-    'output/measures/measure_smr_by_hospital_admission.csv')
+# measures_smr_by_hospital_admission = pd.read_csv(
+#     'output/measures/measure_smr_by_hospital_admission.csv')
+
+
 
 # temporary fix for population not working in Measures
 measures_df_total = measures_df_total.groupby(
@@ -43,29 +43,27 @@ to_datetime_sort(measures_df_sex)
 to_datetime_sort(measures_df_region)
 to_datetime_sort(measures_df_age)
 to_datetime_sort(measures_df_total)
-to_datetime_sort(measures_df_hosp_adm)
 to_datetime_sort(measures_df_falls)
 to_datetime_sort(measures_df_care_home_status)
 to_datetime_sort(measures_df_total_by_practice)
-to_datetime_sort(measures_smr_by_hospital_admission)
+# to_datetime_sort(measures_smr_by_hospital_admission)
 
 def calculate_rate(df, value_col='had_smr', population_col='population'):
-    num_per_hundred_thousand = df[value_col]/(df[population_col]/100000)
-    df['num_per_hundred_thousand'] = num_per_hundred_thousand
+    num_per_thousand = df[value_col]/(df[population_col]/1000)
+    df['num_per_thousand'] = num_per_thousand
 
 
 calculate_rate(measures_df_sex)
 calculate_rate(measures_df_age)
 calculate_rate(measures_df_region)
 calculate_rate(measures_df_total)
-calculate_rate(measures_df_hosp_adm)
-calculate_rate(measures_df_falls)
+# calculate_rate(measures_df_falls, value_col='had_smr_after_falls')
 calculate_rate(measures_df_care_home_status)
 calculate_rate(measures_df_total_by_practice)
-calculate_rate(measures_smr_by_hospital_admission, value_col='had_smr_after_hospital_admission')
+# calculate_rate(measures_smr_by_hospital_admission, value_col='had_smr_after_hospital_admission')
 
 
-def plot_measures(df, title, filename, column_to_plot, category=False, y_label='Number per 100, 000'):
+def plot_measures(df, title, filename, column_to_plot, category=False, y_label='Rate per 1000'):
 
     if category:
         for unique_category in df[category].unique():
@@ -97,37 +95,52 @@ plot_measures(measures_df_total, 'SMR use across Whole Population',
               'population_rates', 'had_smr', category=False, y_label='Total Number')
 
 plot_measures(measures_df_sex,
-              'SMR use by Sex per 100, 000', 'sex_rates', 'num_per_hundred_thousand', category='sex', )
+              'SMR use by Sex per 1000', 'sex_rates', 'num_per_thousand', category='sex', )
 plot_measures(measures_df_region,
-              'SMR use by Region per 100, 000', 'region_rates', 'num_per_hundred_thousand', category='region')
+              'SMR use by Region per 1000', 'region_rates', 'num_per_thousand', category='region')
 plot_measures(measures_df_age,
-              'SMR use by Age Band per 100, 000',  'age_rates', 'num_per_hundred_thousand', category='age_band')
+              'SMR use by Age Band per 1000',  'age_rates', 'num_per_thousand', category='age_band')
 
 
 plot_measures(measures_df_care_home_status,
-              'SMR use by care home status per 100, 000',  'care_home_status_rates', 'num_per_hundred_thousand', category='care_home_status')
-plot_measures(measures_df_falls,
-              'SMR use by fall status per 100, 000',  'falls_rates', 'num_per_hundred_thousand', category='falls')
+              'SMR use by care home status per 1000',  'care_home_status_rates', 'num_per_thousand', category='care_home_status')
 
-plot_measures(measures_df_hosp_adm,
-              'SMR use following recent hospital admision',  'hosp_adm_rates', 'num_per_hundred_thousand', category='hospital_admission')
+
 
 smr_decile_chart = charts.deciles_chart(
     measures_df_total_by_practice,
     period_column="date",
-    column="value",
+    column="num_per_thousand",
     title="SMR by practice",
-    ylabel="rate per 100,000",
+    ylabel="rate per 1000",
+    show_outer_percentiles=False,
+    show_legend=True,
+)
+plt.savefig(f'output/figures/smr_decile_chart.jpeg', bbox_inches='tight')
+plt.clf()
+
+smr_decile_chart_falls = charts.deciles_chart(
+    measures_df_total_by_practice,
+    period_column="date",
+    column="num_per_thousand",
+    title="SMR in those with recent falls by practice",
+    ylabel="rate per 1000",
     show_outer_percentiles=False,
     show_legend=True,
 )
 
-smr_decile_chart_hospital_admission = charts.deciles_chart(
-    measures_smr_by_hospital_admission,
-    period_column="date",
-    column="num_per_hundred_thousand",
-    title="SMR in those hospitalised by practice",
-    ylabel="rate per 100,000",
-    show_outer_percentiles=False,
-    show_legend=True,
-)
+plt.savefig(f'output/figures/smr_decile_chart_falls.jpeg', bbox_inches='tight')
+plt.clf()
+
+# smr_decile_chart_hospital_admission = charts.deciles_chart(
+#     measures_smr_by_hospital_admission,
+#     period_column="date",
+#     column="num_per_thousand",
+#     title="SMR in those hospitalised by practice",
+#     ylabel="rate per 1000",
+#     show_outer_percentiles=False,
+#     show_legend=True,
+# )
+
+# plt.savefig(f'output/figures/smr_decile_chart_hospital_admission.jpeg', bbox_inches='tight')
+# plt.clf()
