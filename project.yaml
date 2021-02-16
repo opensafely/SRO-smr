@@ -40,9 +40,8 @@ actions:
         figure2: output/figures/sex_rates.jpeg
         figure3: output/figures/region_rates.jpeg
         figure4: output/figures/age_rates.jpeg
-        figure5: output/figures/hosp_adm_rates.jpeg
-        figure6: output/figures/care_home_status_rates.jpeg
-        figure7: output/figures/smr_decile_chart_falls.jpeg
-        figure8: output/figures/smr_decile_chart.jpeg
-        figure9: output/figures/smr_decile_chart_hospital_admission.jpeg
+        figure5: output/figures/care_home_status_rates.jpeg
+        figure6: output/figures/smr_decile_chart_falls.jpeg
+        figure7: output/figures/smr_decile_chart.jpeg
+        figure8: output/figures/smr_decile_chart_hospital_admission.jpeg
 
