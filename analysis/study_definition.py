@@ -13,7 +13,7 @@ from cohortextractor import (
 # Import codelists
 from codelists.codelists import *
 
-end_date = "2021-02-01"
+end_date = "2020-11-01"
 
 
 # Specifiy study defeinition
@@ -32,19 +32,17 @@ study = StudyDefinition(
     had_smr=patients.with_these_clinical_events(
         smr_codes,
         returning="binary_flag",
-        between=["index_date", end_date],
+        between=["index_date", "last_day_of_month(index_date)"],
         include_date_of_match=True,
         date_format='YYYY-MM-DD',
         return_expectations={"incidence": 0.2}
     ),
 
 
-
-
     care_home_status=patients.with_these_clinical_events(
         nhse_care_homes_codes,
         returning="binary_flag",
-        between=["index_date", end_date],
+        between=["index_date", "last_day_of_month(index_date)"],
         return_expectations={"incidence": 0.2}
     ),
 
@@ -53,7 +51,7 @@ study = StudyDefinition(
     falls= patients.with_these_clinical_events(
         fall_codes,
         returning="binary_flag",
-        between=["index_date", end_date],
+        between=["index_date", "last_day_of_month(index_date)"],
         include_date_of_match=True,
         date_format='YYYY-MM-DD',
         return_expectations={"incidence": 0.2}

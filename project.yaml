@@ -6,13 +6,13 @@ expectations:
 actions:
 
   generate_study_population_smr:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition --index-date-range "2019-01-01 to 2021-02-01 by month" --output-dir=output/measures
+    run: cohortextractor:latest generate_cohort --study-definition study_definition --index-date-range "2019-01-01 to 2020-11-01 by month" --output-dir=output/measures
     outputs:
       highly_sensitive:
         cohort: output/measures/input_*.csv
 
   generate_study_population_hospital_admission:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition_hospital_admission --index-date-range "2019-01-01 to 2021-02-01 by month" --output-dir=output/measures
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_hospital_admission --index-date-range "2020-11-01 to 2021-02-01 by month" --output-dir=output/measures
     outputs:
       highly_sensitive:
         cohort: output/measures/input_hospital_admission_*.csv
