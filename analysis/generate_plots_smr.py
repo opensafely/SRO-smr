@@ -66,10 +66,10 @@ calculate_rate(measures_df_sex)
 calculate_rate(measures_df_age)
 calculate_rate(measures_df_region)
 calculate_rate(measures_df_total)
-calculate_rate(measures_df_falls, value_col='had_smr_after_falls')
+# calculate_rate(measures_df_falls, value_col='had_smr_after_falls')
 calculate_rate(measures_df_care_home_status)
 calculate_rate(measures_df_total_by_practice)
-calculate_rate(measures_smr_by_hospital_admission, value_col='had_smr_after_hospital_admission')
+# calculate_rate(measures_smr_by_hospital_admission, value_col='had_smr_after_hospital_admission')
 
 
 def plot_measures(df, title, filename, column_to_plot, category=False, y_label='Rate per 1000'):
@@ -131,9 +131,9 @@ plt.clf()
 smr_decile_chart_falls = charts.deciles_chart(
     measures_df_total_by_practice,
     period_column="date",
-    column="num_per_thousand",
+    column="value",
     title="SMR in those with recent falls by practice",
-    ylabel="rate per 1000",
+    ylabel="proportion",
     show_outer_percentiles=False,
     show_legend=True,
 )
@@ -144,9 +144,9 @@ plt.clf()
 smr_decile_chart_hospital_admission = charts.deciles_chart(
     measures_smr_by_hospital_admission,
     period_column="date",
-    column="num_per_thousand",
+    column="value",
     title="SMR in those hospitalised by practice",
-    ylabel="rate per 1000",
+    ylabel="Proportion",
     show_outer_percentiles=False,
     show_legend=True,
 )

@@ -38,7 +38,13 @@ study = StudyDefinition(
     hospital_admission=patients.admitted_to_hospital(
         returning="binary_flag",
         between=["index_date", "last_day_of_month(index_date)"],
-        include_date_of_match=True,
+        date_format='YYYY-MM-DD',
+        return_expectations={"incidence": 0.2}
+    ),
+
+    hospital_admission_date=patients.admitted_to_hospital(
+        returning="date_admitted",
+        between=["index_date", "last_day_of_month(index_date)"],
         date_format='YYYY-MM-DD',
         return_expectations={"incidence": 0.2}
     ),
