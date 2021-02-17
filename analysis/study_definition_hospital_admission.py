@@ -42,8 +42,8 @@ study = StudyDefinition(
         return_expectations={"incidence": 0.2}
     ),
 
-    hospital_admission_date=patients.admitted_to_hospital(
-        returning="date_admitted",
+    hospital_discharged_date=patients.admitted_to_hospital(
+        returning="date_discharged",
         between=["index_date", "last_day_of_month(index_date)"],
         date_format='YYYY-MM-DD',
         return_expectations={"incidence": 0.2}
@@ -52,8 +52,8 @@ study = StudyDefinition(
     had_smr_after_hospital_admission=patients.with_these_clinical_events(
         smr_codes,
         returning="binary_flag",
-        between=["hospital_admission_date",
-                 "hospital_admission_date + 3 months"],
+        between=["hospital_discharged_date",
+                 "hospital_discharged_date + 3 months"],
         return_expectations={"incidence": 0.2}
     ),
 
