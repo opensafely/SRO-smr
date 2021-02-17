@@ -14,8 +14,8 @@ measures_df_region = pd.read_csv(
     'output/measures/measure_smr_by_region.csv')
 measures_df_age = pd.read_csv(
     'output/measures/measure_smr_by_age_band.csv')
-measures_df_falls = pd.read_csv(
-    'output/measures/measure_smr_by_falls.csv')
+# measures_df_falls = pd.read_csv(
+#     'output/measures/measure_smr_by_falls.csv')
 measures_df_care_home_status = pd.read_csv(
     'output/measures/measure_smr_by_care_home_status.csv')
 measures_df_total = pd.read_csv(
@@ -36,6 +36,19 @@ for file in os.listdir('output/measures'):
 
 measures_smr_by_hospital_admission = pd.concat(df_list)
 
+
+df_list = []
+for file in os.listdir('output/measures'):
+    if file.startswith('measure_smr_by_falls'):
+        df = pd.read_csv(os.path.join('output/measures', file))
+        date = file.split('_')[-1][:-4]
+        df['date'] = date
+        df_list.append(df)
+
+measures_smr_by_falls = pd.concat(df_list)
+
+
+
 # temporary fix for population not working in Measures
 measures_df_total = measures_df_total.groupby(
     ['date'])['had_smr', 'population'].sum().reset_index()
@@ -52,7 +65,7 @@ to_datetime_sort(measures_df_sex)
 to_datetime_sort(measures_df_region)
 to_datetime_sort(measures_df_age)
 to_datetime_sort(measures_df_total)
-to_datetime_sort(measures_df_falls)
+to_datetime_sort(measures_smr_by_falls)
 to_datetime_sort(measures_df_care_home_status)
 to_datetime_sort(measures_df_total_by_practice)
 to_datetime_sort(measures_smr_by_hospital_admission)

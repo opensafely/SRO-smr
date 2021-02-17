@@ -47,26 +47,6 @@ study = StudyDefinition(
     ),
 
 
-    
-    falls= patients.with_these_clinical_events(
-        fall_codes,
-        returning="binary_flag",
-        between=["index_date", "last_day_of_month(index_date)"],
-        include_date_of_match=True,
-        date_format='YYYY-MM-DD',
-        return_expectations={"incidence": 0.2}
-    ),
-
-    had_smr_after_falls=patients.with_these_clinical_events(
-        smr_codes,
-        returning="binary_flag",
-        between=["falls_date",
-                 "falls_date + 3 months"],
-        return_expectations={"incidence": 0.2}
-    ),
-
-
-
     region=patients.registered_practice_as_of(
         "index_date",
         returning="nuts1_region_name",
@@ -164,13 +144,6 @@ measures = [
         numerator="had_smr",
         denominator="population",
         group_by=["care_home_status"],
-    ),
-
-    Measure(
-        id="smr_by_falls",
-        numerator="had_smr_after_falls",
-        denominator="population",
-        group_by=['practice'],
     ),
 
 
