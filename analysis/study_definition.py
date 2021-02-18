@@ -13,7 +13,7 @@ from cohortextractor import (
 # Import codelists
 from codelists.codelists import *
 
-end_date = "2020-11-01"
+end_date = "2021-02-01"
 
 
 # Specifiy study defeinition
