@@ -189,7 +189,8 @@ calculate_rate(measures_df_hospital_admission)
 #https://github.com/opensafely/hospital-disruption-research/blob/master/analysis/rate_calculations.py
 
 
-
+#Remove U/T in sex column
+measures_df_sex = measures_df_sex[measures_df_sex['sex'].isin(["F", "M"])]
 
 
 def plot_measures(df, title, filename, column_to_plot, category=False, y_label='Rate per 1000'):
