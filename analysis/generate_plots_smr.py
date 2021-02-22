@@ -6,6 +6,8 @@ import os
 from ebmdatalab import charts
 from study_definition import measures
 
+
+
 if not os.path.exists('output/figures'):
     os.mkdir('output/figures')
 
@@ -86,13 +88,28 @@ def redact_small_numbers(df, n, m):
     return df
 
 
+falls_measure = Measure(
+    id="smr_by_falls",
+    numerator="had_smr_after_falls",
+    denominator="population",
+    group_by=None,
+),
+
+hosp_admission_measure = Measure(
+    id="smr_by_hospital_admission",
+    numerator="had_smr_after_hospital_admission",
+    denominator="population",
+    group_by=None,
+),
+
 redact_small_numbers(measures_df_sex, 10, measures[0])
 redact_small_numbers(measures_df_region, 10, measures[1])
 redact_small_numbers(measures_df_age, 10, measures[2])
 redact_small_numbers(measures_df_care_home_status, 10, measures[3])
 redact_small_numbers(measures_df_total,10, measures[4])
 redact_small_numbers(measures_df_total_by_practice, 10, measures[5])
-
+redact_small_numbers(measures_smr_by_hospital_admission, 10, hosp_admission_measure)
+redact_small_numbers(measures_smr_by_falls, 10, falls_measure)
 
 
 def calculate_rate(df, value_col='had_smr', population_col='population'):
