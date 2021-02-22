@@ -11,17 +11,7 @@ actions:
       highly_sensitive:
         cohort: output/measures/input_*.csv
 
-  generate_study_population_hospital_admission:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition_hospital_admission --index-date-range "2020-09-01 to 2020-11-01 by month" --output-dir=output/measures
-    outputs:
-      highly_sensitive:
-        cohort: output/measures/input_hospital_admission_*.csv
   
-  generate_study_population_falls:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition_falls --index-date-range "2020-09-01 to 2021-02-01 by month" --output-dir=output/measures
-    outputs:
-      highly_sensitive:
-        cohort: output/measures/input_falls_*.csv
   
   generate_measures_smr:
       run: cohortextractor:latest generate_measures --study-definition study_definition --output-dir=output/measures
@@ -30,23 +20,11 @@ actions:
         moderately_sensitive:
           measure_csv: output/measures/measure_*.csv
 
-  generate_measures_hospital_admission:
-      run: cohortextractor:latest generate_measures --study-definition study_definition_hospital_admission --output-dir=output/measures
-      needs: [generate_study_population_hospital_admission]
-      outputs:
-        moderately_sensitive:
-          measure_csv: output/measures/measure_smr_by_hospital_admission_*.csv
   
-  generate_measures_falls:
-      run: cohortextractor:latest generate_measures --study-definition study_definition_falls --output-dir=output/measures
-      needs: [generate_study_population_falls]
-      outputs:
-        moderately_sensitive:
-          measure_csv: output/measures/measure_smr_by_falls_*.csv
   
   generate_plots_smr:
     run: python:latest python analysis/generate_plots_smr.py
-    needs: [generate_measures_smr, generate_measures_hospital_admission, generate_measures_falls]
+    needs: [generate_measures_smr]
     outputs:
       moderately_sensitive:
         figure1: output/figures/population_rates.jpeg
@@ -54,7 +32,8 @@ actions:
         figure3: output/figures/region_rates.jpeg
         figure4: output/figures/age_rates.jpeg
         figure5: output/figures/care_home_status_rates.jpeg
-        figure6: output/figures/smr_decile_chart_falls.jpeg
-        figure7: output/figures/smr_decile_chart.jpeg
-        figure8: output/figures/smr_decile_chart_hospital_admission.jpeg
+        figure6: output/figures/falls_rates.jpeg
+        figure7: output/figures/hospital_admission_rates.jpeg
+        figure8: output/figures/smr_decile_chart.jpeg
+        
 
