@@ -91,6 +91,7 @@ redact_small_numbers(measures_df_region, 10, measures[1])
 redact_small_numbers(measures_df_age, 10, measures[2])
 redact_small_numbers(measures_df_care_home_status, 10, measures[3])
 redact_small_numbers(measures_df_total,10, measures[4])
+redact_small_numbers(measures_df_total_by_practice, 10, measures[5])
 
 
 
