@@ -10,7 +10,7 @@ from cohortextractor import (
 
 
 # Import codelists
-from codelists.codelists import *
+from codelists import *
 
 
 end_date = "2021-02-01"
