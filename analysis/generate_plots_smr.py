@@ -93,14 +93,14 @@ falls_measure = Measure(
     numerator="had_smr_after_falls",
     denominator="population",
     group_by=None,
-),
+)
 
 hosp_admission_measure = Measure(
     id="smr_by_hospital_admission",
     numerator="had_smr_after_hospital_admission",
     denominator="population",
     group_by=None,
-),
+)
 
 redact_small_numbers(measures_df_sex, 10, measures[0])
 redact_small_numbers(measures_df_region, 10, measures[1])
