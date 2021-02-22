@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import os
 from ebmdatalab import charts
 from study_definition import measures
-
+from cohortextractor import Measure
 
 
 if not os.path.exists('output/figures'):
