@@ -38,8 +38,8 @@ study = StudyDefinition(
 
     
 
-    registered=patients.registered_as_of("index_date")
-    died=patients.died_from_any_cause(on_or_before="index_date")
+    registered=patients.registered_as_of("index_date"),
+    died=patients.died_from_any_cause(on_or_before="index_date"),
 
     falls=patients.with_these_clinical_events(
         fall_codes,

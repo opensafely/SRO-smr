@@ -39,8 +39,8 @@ study = StudyDefinition(
 
 
 
-    registered=patients.registered_as_of("index_date")
-    died=patients.died_from_any_cause(on_or_before="index_date")
+    registered=patients.registered_as_of("index_date"),
+    died=patients.died_from_any_cause(on_or_before="index_date"),
 
     hospital_admission=patients.admitted_to_hospital(
         returning="binary_flag",
