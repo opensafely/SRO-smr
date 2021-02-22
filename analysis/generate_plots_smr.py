@@ -192,6 +192,8 @@ calculate_rate(measures_df_hospital_admission)
 #Remove U/T in sex column
 measures_df_sex = measures_df_sex[measures_df_sex['sex'].isin(["F", "M"])]
 
+#Remove default age band
+measures_df_age = measures_df_age[~measures_df_age['age_band'].isin(["0"])]
 
 def plot_measures(df, title, filename, column_to_plot, category=False, y_label='Rate per 1000'):
 
