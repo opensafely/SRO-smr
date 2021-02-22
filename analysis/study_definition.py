@@ -26,8 +26,16 @@ study = StudyDefinition(
         "incidence": 0.8,
     },
 
-    population=patients.registered_as_of("index_date"),
+    population= patients.satisfying(
+        """
+        registered AND
+        (NOT died)
+        """
+    )
     
+    registered=patients.registered_as_of("index_date")
+    died = patients.died_from_any_cause(on_or_before="index_date")
+
 
     had_smr=patients.with_these_clinical_events(
         smr_codes,
