@@ -29,11 +29,25 @@ study = StudyDefinition(
     #select population that have been admitted to hospital
     population=patients.satisfying(
         """
+        registered AND 
+        (NOT died) AND
         hospital_admission
         """,
         
         
         ),
+
+
+
+    registered=patients.registered_as_of(
+        "index_date",
+        return_expectations={"incidence": 0.9},
+    ),
+    died=patients.died_from_any_cause(
+        on_or_before="index_date",
+        return_expectations={"incidence": 0.1}
+    ),
+
 
     hospital_admission=patients.admitted_to_hospital(
         returning="binary_flag",
