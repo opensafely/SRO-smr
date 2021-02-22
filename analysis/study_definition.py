@@ -14,7 +14,7 @@ from cohortextractor import (
 from codelists.codelists import *
 
 end_date = "2021-02-01"
-
+start_date = "2019-01-01"
 
 # Specifiy study defeinition
 study = StudyDefinition(
@@ -40,6 +40,13 @@ study = StudyDefinition(
 
 
     care_home_status=patients.with_these_clinical_events(
+        nhse_care_homes_codes,
+        returning="binary_flag",
+        between=[start_date, "last_day_of_month(index_date)"],
+        return_expectations={"incidence": 0.2}
+    ),
+
+    recent_care_home_admission=patients.with_these_clinical_events(
         nhse_care_homes_codes,
         returning="binary_flag",
         between=["index_date", "last_day_of_month(index_date)"],
