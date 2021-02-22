@@ -1,8 +1,10 @@
 import sys
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 import os
 from ebmdatalab import charts
+from study_definition import measures
 
 if not os.path.exists('output/figures'):
     os.mkdir('output/figures')
@@ -70,6 +72,28 @@ to_datetime_sort(measures_df_care_home_status)
 to_datetime_sort(measures_df_total_by_practice)
 to_datetime_sort(measures_smr_by_hospital_admission)
 
+
+def redact_small_numbers(df, n, m):
+    """
+    Takes measures df and converts any row to nana where value of denominator or numerater in measure m equal to 
+    or below n
+    Returns df of same shape.
+    """
+    mask_n = df[m.numerator].isin(list(range(0, n+1)))
+    mask_d = df[m.denominator].isin(list(range(0, n+1)))
+    mask = mask_n | mask_d
+    df.loc[mask, :] = np.nan
+    return df
+
+
+redact_small_numbers(measures_df_sex, 10, measures[0])
+redact_small_numbers(measures_df_region, 10, measures[1])
+redact_small_numbers(measures_df_age, 10, measures[2])
+redact_small_numbers(measures_df_care_home_status, 10, measures[3])
+redact_small_numbers(measures_df_total,10, measures[4])
+
+
+
 def calculate_rate(df, value_col='had_smr', population_col='population'):
     num_per_thousand = df[value_col]/(df[population_col]/1000)
     df['num_per_thousand'] = num_per_thousand
@@ -84,6 +108,11 @@ calculate_rate(measures_df_care_home_status)
 calculate_rate(measures_df_total_by_practice)
 # calculate_rate(measures_smr_by_hospital_admission, value_col='had_smr_after_hospital_admission')
 
+#https://github.com/opensafely/hospital-disruption-research/blob/master/analysis/rate_calculations.py
+
+
+
+
 
 def plot_measures(df, title, filename, column_to_plot, category=False, y_label='Rate per 1000'):
 
@@ -92,9 +121,9 @@ def plot_measures(df, title, filename, column_to_plot, category=False, y_label='
 
             df_subset = df[df[category] == unique_category]
 
-            plt.plot(df_subset['date'], df_subset[column_to_plot])
+            plt.plot(df_subset['date'], df_subset[column_to_plot], marker='o')
     else:
-        plt.plot(df['date'], df[column_to_plot])
+        plt.plot(df['date'], df[column_to_plot], marker='o')
 
     plt.ylabel(y_label)
     plt.xlabel('Date')
