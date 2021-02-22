@@ -18,10 +18,10 @@ end_date = "2021-02-01"
 
 # Specifiy study defeinition
 study = StudyDefinition(
-    index_date = "2019-01-01",
+    index_date = "2020-09-01",
     # Configure the expectations framework
     default_expectations={
-        "date": {"earliest": "2019-01-01", "latest": end_date},
+        "date": {"earliest": "2020-09-01", "latest": end_date},
         "rate": "exponential_increase",
         "incidence": 0.8,
     },
