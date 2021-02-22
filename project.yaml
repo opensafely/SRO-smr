@@ -37,3 +37,10 @@ actions:
         figure8: output/figures/smr_decile_chart.jpeg
         
 
+  generate_notebook:
+    run: jupyter:latest jupyter nbconvert /workspace/SMR_Notebook.ipynb --execute --to html --output-dir=/workspace/output --no-input
+    needs: [generate_measures_smr]
+    outputs:
+      moderately_sensitive:
+        notebook: output/SMR_Notebook.html
+     
