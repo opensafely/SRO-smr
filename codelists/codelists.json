@@ -6,12 +6,6 @@
       "downloaded_at": "2021-02-12 09:46:43.895247Z",
       "sha": "3d2f3998b71863a80b24d60f6f4282e14191ae13"
     },
-    "opensafely-pulse-oximetry.csv": {
-      "id": "opensafely/pulse-oximetry/72ce1380",
-      "url": "https://codelists.opensafely.org/codelist/opensafely/pulse-oximetry/72ce1380/",
-      "downloaded_at": "2021-02-12 09:46:44.106427Z",
-      "sha": "9a82ffa751c58d33e6ddac3f7cef0413ab635bf9"
-    },
     "opensafely-structured-medication-review-nhs-england.csv": {
       "id": "opensafely/structured-medication-review-nhs-england/5459205f",
       "url": "https://codelists.opensafely.org/codelist/opensafely/structured-medication-review-nhs-england/5459205f/",

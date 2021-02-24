@@ -3,11 +3,11 @@ from cohortextractor import (
 )
 
 smr_codes = codelist_from_csv("codelists/opensafely-structured-medication-review-nhs-england.csv",
-                              system="ctv3",
+                              system="snomed",
                               column="code",)
 
 nhse_care_homes_codes = codelist_from_csv("codelists/opensafely-nhs-england-care-homes-residential-status.csv",
-                                    system="ctv3",
+                                    system="snomed",
                                     column="code",)
 
 fall_codes = codelist_from_csv("codelists/opensafely-falls.csv",
