@@ -39,14 +39,14 @@ measures = [
         id="smr_by_falls",
         numerator="had_smr",
         denominator="population",
-        group_by=["had_falls_before_smr"],
+        group_by=["recent_falls"],
     ),
 
     Measure(
         id="smr_by_hospital_admission",
         numerator="had_smr",
         denominator="population",
-        group_by=["had_hospital_admission_before_smr"],
+        group_by=["recent_hospital_admission"],
     ),
 
     Measure(
@@ -238,11 +238,11 @@ plot_measures(measures_df_care_home_status,
               'SMR use by care home status per 1000',  'care_home_status_rates', 'num_per_thousand', category='care_home_status')
 
 plot_measures(measures_df_falls,
-              'SMR use by falls status per 1000',  'falls_rates', 'num_per_thousand', category='had_falls_before_smr')
+              'SMR use by falls status per 1000',  'falls_rates', 'num_per_thousand', category='recent_falls')
 
 
 plot_measures(measures_df_hospital_admission,
-              'SMR use by hospital_admission status per 1000',  'hospital_admission_rates', 'num_per_thousand', category='had_hospital_admission_before_smr')
+              'SMR use by hospital_admission status per 1000',  'hospital_admission_rates', 'num_per_thousand', category='recent_hospital_admission')
 
 
 

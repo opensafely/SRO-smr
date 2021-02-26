@@ -131,18 +131,18 @@ study = StudyDefinition(
 
 
 
-    had_falls_before_smr=patients.with_these_clinical_events(
+    recent_falls=patients.with_these_clinical_events(
         fall_codes,
         returning="binary_flag",
-        between=["had_smr_date - 3 months",
-                 "had_smr_date"],
+        between=["index_date - 3 months",
+                 "index_date"],
         return_expectations={"incidence": 0.2}
     ),
 
     
-    had_hospital_admission_before_smr=patients.admitted_to_hospital(
+    recent_hospital_admission=patients.admitted_to_hospital(
         returning="binary_flag",
-        between=["had_smr_date - 3 months", "had_smr_date"],
+        between=["index_date - 3 months", "index_date"],
         date_format='YYYY-MM-DD',
         return_expectations={"incidence": 0.2}
     ),
@@ -192,14 +192,14 @@ measures = [
         id="smr_by_falls",
         numerator="had_smr",
         denominator="population",
-        group_by=["had_falls_before_smr"],
+        group_by=["recent_falls"],
     ),
 
     Measure(
         id="smr_by_hospital_admission",
         numerator="had_smr",
         denominator="population",
-        group_by=["had_hospital_admission_before_smr"],
+        group_by=["recent_hospital_admission"],
     ),
 
     Measure(
