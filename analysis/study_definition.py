@@ -13,7 +13,7 @@ from cohortextractor import (
 # Import codelists
 from codelists import *
 
-end_date = "2021-02-01"
+end_date = "2021-01-01"
 start_date = "2019-01-01"
 
 # Specifiy study defeinition
@@ -30,44 +30,18 @@ study = StudyDefinition(
         """
         registered AND
         (NOT died)
-        """
+        """,
+
+        registered=patients.registered_as_of(
+            "index_date",
+            return_expectations={"incidence": 0.9},
+        ),
+        died=patients.died_from_any_cause(
+            on_or_before="index_date",
+            return_expectations={"incidence": 0.1}
+        ),
     ),
     
-    registered=patients.registered_as_of(
-        "index_date",
-        return_expectations={"incidence": 0.9},
-    ),
-    died = patients.died_from_any_cause(
-        on_or_before="index_date",
-        return_expectations={"incidence": 0.1}
-        ),
-
-
-    had_smr=patients.with_these_clinical_events(
-        smr_codes,
-        returning="binary_flag",
-        between=["index_date", "last_day_of_month(index_date)"],
-        include_date_of_match=True,
-        date_format='YYYY-MM-DD',
-        return_expectations={"incidence": 0.2}
-    ),
-
-
-    care_home_status=patients.with_these_clinical_events(
-        nhse_care_homes_codes,
-        returning="binary_flag",
-        between=[start_date, "last_day_of_month(index_date)"],
-        return_expectations={"incidence": 0.2}
-    ),
-
-    recent_care_home_admission=patients.with_these_clinical_events(
-        nhse_care_homes_codes,
-        returning="binary_flag",
-        between=["index_date", "last_day_of_month(index_date)"],
-        return_expectations={"incidence": 0.2}
-    ),
-
-
     region=patients.registered_practice_as_of(
         "index_date",
         returning="nuts1_region_name",
@@ -106,7 +80,8 @@ study = StudyDefinition(
             "rate": "universal",
             "category": {
                 "ratios": {
-                    "0-19": 0.125,
+                    "0": 0.001,
+                    "0-19": 0.124,
                     "20-29": 0.125,
                     "30-39": 0.125,
                     "40-49": 0.125,
@@ -124,9 +99,55 @@ study = StudyDefinition(
     sex=patients.sex(
         return_expectations={
             "rate": "universal",
-            "category": {"ratios": {"M": 0.49, "F": 0.51}},
+            "category": {"ratios": {"M": 0.49, "F": 0.5, "U": 0.01}},
         }
     ),
+    
+    care_home_status=patients.with_these_clinical_events(
+        nhse_care_homes_codes,
+        returning="binary_flag",
+        between=[start_date, "last_day_of_month(index_date)"],
+        return_expectations={"incidence": 0.2}
+    ),
+
+    recent_care_home_admission=patients.with_these_clinical_events(
+        nhse_care_homes_codes,
+        returning="binary_flag",
+        between=["index_date", "last_day_of_month(index_date)"],
+        return_expectations={"incidence": 0.2}
+    ),
+
+
+
+    had_smr=patients.with_these_clinical_events(
+        smr_codes,
+        returning="binary_flag",
+        between=["index_date", "last_day_of_month(index_date)"],
+        include_date_of_match=True,
+        date_format='YYYY-MM-DD',
+        return_expectations={"incidence": 0.2}
+    ),
+
+
+
+
+    recent_falls=patients.with_these_clinical_events(
+        fall_codes,
+        returning="binary_flag",
+        between=["index_date - 3 months",
+                 "index_date"],
+        return_expectations={"incidence": 0.2}
+    ),
+
+    
+    recent_hospital_admission=patients.admitted_to_hospital(
+        returning="binary_flag",
+        between=["index_date - 3 months", "index_date"],
+        date_format='YYYY-MM-DD',
+        return_expectations={"incidence": 0.2}
+    ),
+
+
 
     practice=patients.registered_practice_as_of(
         "index_date",
@@ -167,6 +188,19 @@ measures = [
         group_by=["care_home_status"],
     ),
 
+    Measure(
+        id="smr_by_falls",
+        numerator="had_smr",
+        denominator="population",
+        group_by=["recent_falls"],
+    ),
+
+    Measure(
+        id="smr_by_hospital_admission",
+        numerator="had_smr",
+        denominator="population",
+        group_by=["recent_hospital_admission"],
+    ),
 
     Measure(
         id="smr_total",

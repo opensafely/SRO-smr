@@ -29,8 +29,7 @@ study = StudyDefinition(
     population=patients.satisfying(
         """
         registered AND
-        (NOT died) AND
-        falls
+        (NOT died)
         """,
 
 
@@ -48,9 +47,8 @@ study = StudyDefinition(
         return_expectations={"incidence": 0.1}
     ),
 
-
-    falls=patients.with_these_clinical_events(
-        fall_codes,
+    had_smr=patients.with_these_clinical_events(
+        smr_codes,
         returning="binary_flag",
         between=["index_date", "last_day_of_month(index_date)"],
         include_date_of_match=True,
@@ -58,13 +56,14 @@ study = StudyDefinition(
         return_expectations={"incidence": 0.2}
     ),
 
-    had_smr_after_falls=patients.with_these_clinical_events(
-        smr_codes,
+    had_falls_before_smr=patients.with_these_clinical_events(
+        fall_codes,
         returning="binary_flag",
-        between=["falls_date",
-                 "falls_date + 3 months"],
+        between=["had_smr_date - 3 months",
+                 "had_smr_date"],
         return_expectations={"incidence": 0.2}
     ),
+
 
 
     practice=patients.registered_practice_as_of(
@@ -83,7 +82,7 @@ measures = [
 
     Measure(
         id="smr_by_falls",
-        numerator="had_smr_after_falls",
+        numerator="had_falls_before_smr",
         denominator="population",
         group_by=['practice'],
     ),
