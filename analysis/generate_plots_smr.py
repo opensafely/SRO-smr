@@ -222,6 +222,12 @@ def plot_measures(df, title, filename, column_to_plot, category=False, y_label='
 
     plt.clf()
 
+# cut jan data to align with other charts
+
+measures_df_total = measures_df_total.loc[measures_df_total['date'] < '2021-01-01',:]
+measures_df_total_by_practice = measures_df_total_by_practice.loc[measures_df_total_by_practice['date'] < '2021-01-01',:]
+
+
 
 plot_measures(measures_df_total, 'SMR use across Whole Population',
               'population_rates', 'had_smr', category=False, y_label='Total Number')
