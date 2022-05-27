@@ -1,12 +1,7 @@
-# OpenSAFELY Research Template
+# OpenSAFELY NHS Service Restoration Observatory 2: structured medication review (SMR)
 
-This is a template repository for making new OpenSAFELY resarch projects.
+This is the code and configuration for the analysis of structured medication reviews for our paper, "OpenSAFELY NHS Service Restoration Observatory 2: changes in primary care activity across six clinical areas during the COVID-19 pandemic"
 
-# _title goes here_
-
-This is the code and configuration for our paper, _name goes here_
-
-* The paper is [here]()
 * Raw model outputs, including charts, crosstabs, etc, are in `released_outputs/`
 * If you are interested in how we defined our variables, take a look at the [study definition](analysis/study_definition.py); this is written in `python`, but non-programmers should be able to understand what is going on there
 * If you are interested in how we defined our code lists, look in the [codelists folder](./codelists/).
