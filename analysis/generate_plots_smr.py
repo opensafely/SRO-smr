@@ -226,7 +226,7 @@ def plot_measures(df, title, filename, column_to_plot, category=False, y_label='
 
 measures_df_total = measures_df_total.loc[measures_df_total['date'] < '2021-01-01',:]
 measures_df_total_by_practice = measures_df_total_by_practice.loc[measures_df_total_by_practice['date'] < '2021-01-01',:]
-
+measures_df_total.to_csv('output/measures/measures_df_total_for_plot.csv')
 
 
 plot_measures(measures_df_total, 'SMR use across Whole Population',
