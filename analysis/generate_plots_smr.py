@@ -177,6 +177,10 @@ def calculate_rate(df, value_col='had_smr', population_col='population'):
     df[value_col] = df[value_col].round(-2)
     df[population_col] = df[population_col].round(-2)
     num_per_thousand = df[value_col]/(df[population_col]/1000)
+    # round to 4 decimal places
+    num_per_thousand = num_per_thousand.round(4)
+    # drop value col
+    df.drop("value", axis=1, inplace=True)
     df['num_per_thousand'] = num_per_thousand
 
 
