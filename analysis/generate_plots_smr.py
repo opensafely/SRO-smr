@@ -173,6 +173,9 @@ redact_small_numbers(measures_df_total,10, measures[6])
 
 
 def calculate_rate(df, value_col='had_smr', population_col='population'):
+    # round value col and population to nearest 100
+    df[value_col] = df[value_col].round(-2)
+    df[population_col] = df[population_col].round(-2)
     num_per_thousand = df[value_col]/(df[population_col]/1000)
     df['num_per_thousand'] = num_per_thousand
 
